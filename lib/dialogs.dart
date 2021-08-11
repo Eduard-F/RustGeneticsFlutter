@@ -117,3 +117,22 @@ Future<AlertDialog> noSolutionDialog(BuildContext contextt) async {
     }
   );
 }
+Future<AlertDialog> aboutDialog(BuildContext contextt) async {
+  return showDialog(
+    context: contextt,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('No solutions found'),
+        content: Text(''),
+        actions: [
+          FlatButton(
+            onPressed: () {
+              Navigator.of(contextt).pop();
+            },
+            child: Text('Close'),
+          ),
+        ],
+      );
+    }
+  );
+}

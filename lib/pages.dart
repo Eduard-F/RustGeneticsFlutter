@@ -17,13 +17,25 @@ class _ResultPageState extends State<ResultPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Rust Genetics')),
-      // body: ListView(children: _getItems()),
-      body: new Center(
-        child: new ListView(
-          children: _getResultRows(widget.plants)
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end:
+              Alignment(0.8, 0.0),
+            colors: <Color>[
+              Color(0xffF7A8B8),
+              Color(0xff55CDFC),
+            ],
+            tileMode: TileMode.repeated
+          ),
+        ),
+        child: new Center(
+          child: new ListView(
+            children: _getResultRows(widget.plants)
+          ),
         ),
       ),
-      // body: Column(children: _getItems(),)
     );
   }
 
@@ -45,19 +57,17 @@ class _ResultPageState extends State<ResultPage> {
                 color: Colors.white
               ),
             ),
-            // color: Colors.lightBlue,
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
                   color: Colors.black,
                   spreadRadius: 1,
                   blurRadius: 5,
-                  // offset: Offset(0, -10),
                 ),
               ],
               gradient: LinearGradient(
-                  colors: [Colors.purple[900], Colors.purple]
-                ),
+                colors: [Color(0xff7E55B4), Colors.purple]
+              ),
             ),
           ),
         )
@@ -70,14 +80,6 @@ class _ResultPageState extends State<ResultPage> {
   Widget _buildRowItem(List row) {
     return Container(
       height: 330.0,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          stops: [0.3, 0.5, 0.7],
-          colors: [Color.fromRGBO(85, 205, 252, 1), Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(247, 168, 184, 1)]
-        )
-      ),
       child: new ListView(
         scrollDirection: Axis.horizontal,
         children: _buildColumnItem(row)
@@ -121,6 +123,13 @@ class _ResultPageState extends State<ResultPage> {
     final String seed = title;
     return Column(
       children: [
+        Text(
+          'Result',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold
+          ),
+        ),
         Icon(
           Icons.keyboard_arrow_down,
         ),
@@ -147,3 +156,38 @@ class _ResultPageState extends State<ResultPage> {
     );
   }
 }
+
+class HowToPage extends StatefulWidget {
+  @override
+  _HowToPageState createState() => _HowToPageState();
+}
+
+class _HowToPageState extends State<HowToPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('How To')),
+      body: Container(
+        child: ListView(
+          children: [
+            Text('hello'),
+            Text('bye')
+          ],
+        ),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end:
+              Alignment(0.8, 0.0),
+            colors: <Color>[
+              Color(0xffF7A8B8),
+              Color(0xff55CDFC),
+            ],
+            tileMode: TileMode.repeated
+          ),
+        ),
+      ),
+    );
+  }
+}
+

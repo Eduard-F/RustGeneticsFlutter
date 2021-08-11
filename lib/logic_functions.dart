@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 import 'dart:math';
-import 'package:loader_overlay/loader_overlay.dart';
 
 import 'package:rust_genetics/widgets.dart';
 import 'package:rust_genetics/pages.dart';
@@ -12,10 +12,14 @@ var gregex = RegExp(r'G');
 var yregex = RegExp(r'Y');
 var hregex = RegExp(r'H');
 
+Function eq = const ListEquality().equals;
+
 
 Future<bool> run(context, _plants, String ideal, [bool skip_check = false]) async {
   try {
-    // _plants = ['WYHYYHG','GWYYYY','XHGXGX','WHWWWW','XXXXXX','WWWWWW','XGXGXG','WGWGWG','GGGXXG','GXXGGG'];
+    // _plants = ['YHYYGH','YGYHGH','GGGWGY','GGGXYH','HHGGHX','WYYGHH','YHGWYH','GGHXGH','GHYXYH','WYGGHX','GYHWGY','WYGXWY'];
+    _plants = ['YGYHGH','GYHWGY','WYGXWY','YHYYGH','GGGWGY'];
+    print(_plants);
     if (_plants.length < 4) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Atleast 4 clones required'))
@@ -209,10 +213,10 @@ Future<bool> run(context, _plants, String ideal, [bool skip_check = false]) asyn
       }
 
       for (var k1 = 0; k1 < plants_len; k1++) {
-        await Future.delayed(Duration(microseconds: 1));
         if (done) {break;}
         loop2:
         for (var k2 = 0; k2 < plants_len; k2++) {
+          await Future.delayed(Duration(microseconds: 1));
           if (done) {break;}
           if (k1 == k2) {
             // only use the same plant twice if its 6 green plant
@@ -238,7 +242,11 @@ Future<bool> run(context, _plants, String ideal, [bool skip_check = false]) asyn
               temp_arr.add(plants[k2]);
               temp_arr.add(plants[k3]);
               temp_arr.add(plants[k4]);
+              if (plants.length == 39) {
+                print('39');
+              }
               result = geneCalc(temp_arr, g_count, y_count, h_count);
+              
               temp_arr = [];
 
               if (result['fifty_fifty']) {
@@ -262,6 +270,7 @@ Future<bool> run(context, _plants, String ideal, [bool skip_check = false]) asyn
 
                 }
                 if (result['done']) {
+                  done = true;
                   break;
                 }
               } else if (result['res1'] != null) {
@@ -285,6 +294,7 @@ Future<bool> run(context, _plants, String ideal, [bool skip_check = false]) asyn
     noSolutionDialog(context);
     return true;
   } catch (e) {
+    print(e);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(e.toString()))
     );
@@ -293,122 +303,12 @@ Future<bool> run(context, _plants, String ideal, [bool skip_check = false]) asyn
 }
 
 Map<dynamic, dynamic> check(gene_temp, g_count, y_count, h_count) {
-  var res1 = '';
-  var res2 = '';
-  var fifty_fifty = false;
   var rtrn = {};
-  
-  var g = 0.0;var y = 0.0;var h = 0.0;var w = 0.0;var x = 0.0; var dmax = 0.0;
-  for (var k in gene_temp[1]) {
-    if (k == 'G') { g += 0.6; }
-    if (k == 'Y') { y += 0.6; }
-    if (k == 'H') { h += 0.6; }
-    if (k == 'W') { w += 1; }
-    if (k == 'X') { x += 1; }
-  }
-  dmax = [g,y,h,w,x].reduce(max);
-  if (w == dmax) {res1 += 'W';res2 += 'W';}
-  else if (x == dmax) {res1 += 'X';res2 += 'X';}
-  else if (g == dmax && y == dmax) { res1 += 'G';res2 += 'Y';fifty_fifty=true; }
-  else if (g == dmax && h == dmax) { res1 += 'G';res2 += 'H';fifty_fifty=true; }
-  else if (y == dmax && h == dmax) { res1 += 'Y';res2 += 'H';fifty_fifty=true; }
-  else if (g == dmax) {res1 += 'G';res2 += 'G';}
-  else if (y == dmax) {res1 += 'Y';res2 += 'Y';}
-  else if (h == dmax) {res1 += 'H';res2 += 'H';}
+  var temp_arr = fiftyFiftyCheck(gene_temp);
+  var res1 = temp_arr[0];
+  var res2 = temp_arr[1];
+  var fifty_fifty = temp_arr[2];
 
-  g = 0.0;y = 0.0;h = 0.0;w = 0.0;x = 0.0;
-  for (var k in gene_temp[2]) {
-    if (k == 'G') { g += 0.6; }
-    if (k == 'Y') { y += 0.6; }
-    if (k == 'H') { h += 0.6; }
-    if (k == 'W') { w += 1; }
-    if (k == 'X') { x += 1; }
-  }
-  dmax = [g,y,h,w,x].reduce(max);
-  if (w == dmax) {res1 += 'W';res2 += 'W';}
-  else if (x == dmax) {res1 += 'X';res2 += 'X';}
-  else if (g == dmax && y == dmax) { res1 += 'G';res2 += 'Y';fifty_fifty=true; }
-  else if (g == dmax && h == dmax) { res1 += 'G';res2 += 'H';fifty_fifty=true; }
-  else if (y == dmax && h == dmax) { res1 += 'Y';res2 += 'H';fifty_fifty=true; }
-  else if (g == dmax) {res1 += 'G';res2 += 'G';}
-  else if (y == dmax) {res1 += 'Y';res2 += 'Y';}
-  else if (h == dmax) {res1 += 'H';res2 += 'H';}
-
-
-  g = 0.0;y = 0.0;h = 0.0;w = 0.0;x = 0.0;
-  for (var k in gene_temp[3]) {
-    if (k == 'G') { g += 0.6; }
-    if (k == 'Y') { y += 0.6; }
-    if (k == 'H') { h += 0.6; }
-    if (k == 'W') { w += 1; }
-    if (k == 'X') { x += 1; }
-  }
-  dmax = [g,y,h,w,x].reduce(max);
-  if (w == dmax) {res1 += 'W';res2 += 'W';}
-  else if (x == dmax) {res1 += 'X';res2 += 'X';}
-  else if (g == dmax && y == dmax) { res1 += 'G';res2 += 'Y';fifty_fifty=true; }
-  else if (g == dmax && h == dmax) { res1 += 'G';res2 += 'H';fifty_fifty=true; }
-  else if (y == dmax && h == dmax) { res1 += 'Y';res2 += 'H';fifty_fifty=true; }
-  else if (g == dmax) {res1 += 'G';res2 += 'G';}
-  else if (y == dmax) {res1 += 'Y';res2 += 'Y';}
-  else if (h == dmax) {res1 += 'H';res2 += 'H';}
-
-
-  g = 0.0;y = 0.0;h = 0.0;w = 0.0;x = 0.0;
-  for (var k in gene_temp[4]) {
-    if (k == 'G') { g += 0.6; }
-    if (k == 'Y') { y += 0.6; }
-    if (k == 'H') { h += 0.6; }
-    if (k == 'W') { w += 1; }
-    if (k == 'X') { x += 1; }
-  }
-  dmax = [g,y,h,w,x].reduce(max);
-  if (w == dmax) {res1 += 'W';res2 += 'W';}
-  else if (x == dmax) {res1 += 'X';res2 += 'X';}
-  else if (g == dmax && y == dmax) { res1 += 'G';res2 += 'Y';fifty_fifty=true; }
-  else if (g == dmax && h == dmax) { res1 += 'G';res2 += 'H';fifty_fifty=true; }
-  else if (y == dmax && h == dmax) { res1 += 'Y';res2 += 'H';fifty_fifty=true; }
-  else if (g == dmax) {res1 += 'G';res2 += 'G';}
-  else if (y == dmax) {res1 += 'Y';res2 += 'Y';}
-  else if (h == dmax) {res1 += 'H';res2 += 'H';}
-
-
-  g = 0.0;y = 0.0;h = 0.0;w = 0.0;x = 0.0;
-  for (var k in gene_temp[5]) {
-    if (k == 'G') { g += 0.6; }
-    if (k == 'Y') { y += 0.6; }
-    if (k == 'H') { h += 0.6; }
-    if (k == 'W') { w += 1; }
-    if (k == 'X') { x += 1; }
-  }
-  dmax = [g,y,h,w,x].reduce(max);
-  if (w == dmax) {res1 += 'W';res2 += 'W';}
-  else if (x == dmax) {res1 += 'X';res2 += 'X';}
-  else if (g == dmax && y == dmax) { res1 += 'G';res2 += 'Y';fifty_fifty=true; }
-  else if (g == dmax && h == dmax) { res1 += 'G';res2 += 'H';fifty_fifty=true; }
-  else if (y == dmax && h == dmax) { res1 += 'Y';res2 += 'H';fifty_fifty=true; }
-  else if (g == dmax) {res1 += 'G';res2 += 'G';}
-  else if (y == dmax) {res1 += 'Y';res2 += 'Y';}
-  else if (h == dmax) {res1 += 'H';res2 += 'H';}
-
-
-  g = 0.0;y = 0.0;h = 0.0;w = 0.0;x = 0.0;
-  for (var k in gene_temp[6]) {
-    if (k == 'G') { g += 0.6; }
-    if (k == 'Y') { y += 0.6; }
-    if (k == 'H') { h += 0.6; }
-    if (k == 'W') { w += 1; }
-    if (k == 'X') { x += 1; }
-  }
-  dmax = [g,y,h,w,x].reduce(max);
-  if (w == dmax) {res1 += 'W';res2 += 'W';}
-  else if (x == dmax) {res1 += 'X';res2 += 'X';}
-  else if (g == dmax && y == dmax) { res1 += 'G';res2 += 'Y';fifty_fifty=true; }
-  else if (g == dmax && h == dmax) { res1 += 'G';res2 += 'H';fifty_fifty=true; }
-  else if (y == dmax && h == dmax) { res1 += 'Y';res2 += 'H';fifty_fifty=true; }
-  else if (g == dmax) {res1 += 'G';res2 += 'G';}
-  else if (y == dmax) {res1 += 'Y';res2 += 'Y';}
-  else if (h == dmax) {res1 += 'H';res2 += 'H';}
 
   if (fifty_fifty) {
     rtrn['fifty_fifty'] = true;
@@ -448,7 +348,6 @@ Map<dynamic, dynamic> check(gene_temp, g_count, y_count, h_count) {
     
     return rtrn;
   }
-  
 }
 
 Map<dynamic, dynamic> geneCalc(obj, g_count, y_count, h_count) {
@@ -466,6 +365,7 @@ Map<dynamic, dynamic> geneCalc(obj, g_count, y_count, h_count) {
   });
   var new_gene;
   new_gene = check(gene_temp, g_count, y_count, h_count);
+  
   return new_gene;
 }
 
@@ -654,4 +554,80 @@ int checkIfPossible(plants, g_count, y_count, h_count) {
   if (hcount < h_count) {percentage -= 50;}
   if (percentage < 0) percentage = 0;
   return percentage;
+}
+
+List fiftyFiftyCheck(gene_temp) {
+  var res1 = '';
+  var res2 = '';
+  var fifty_fifty = false;
+  var fifty_idx = {'g':[],'y':[],'h':[]};
+  var plant_pairs = [];
+  var g = 0.0;var y = 0.0;var h = 0.0;var w = 0.0;var x = 0.0; var dmax = 0.0;
+  for (var k = 1; k <= 6; k++) {
+    g = 0.0; y = 0.0; h = 0.0; w = 0.0; x = 0.0; dmax = 0.0; fifty_idx = {'g':[],'y':[],'h':[]};
+    // check for 4 plants only
+    for (var l=0; l<4; l++) {
+      if (gene_temp[k][l] == 'G') { g += 0.6;fifty_idx['g'].add(l); }
+      if (gene_temp[k][l] == 'Y') { y += 0.6;fifty_idx['y'].add(l); }
+      if (gene_temp[k][l] == 'H') { h += 0.6;fifty_idx['h'].add(l); }
+      if (gene_temp[k][l] == 'W') { w += 1.0; }
+      if (gene_temp[k][l] == 'X') { x += 1.0; }
+    }
+    dmax = [g,y,h,w,x].reduce(max);
+    if (w == dmax) {res1 += 'W';res2 += 'W';}
+    else if (x == dmax) {res1 += 'X';res2 += 'X';}
+    else if (g == dmax && y == dmax) {
+      // handle the weird 50/50 bug
+      if (plant_pairs.length == 0) {
+        plant_pairs.add(fifty_idx['g']);
+        plant_pairs.add(fifty_idx['y']);
+        res1 += 'G';res2 += 'Y';fifty_fifty=true;
+      } else {
+        if (eq(fifty_idx['g'], plant_pairs[0])) {
+          res1 += 'G';res2 += 'Y';fifty_fifty=true;
+        } else if (eq(fifty_idx['g'], plant_pairs[1])) {
+          res1 += 'Y';res2 += 'G';fifty_fifty=true;
+        } else {
+          res1 += 'G';res2 += 'Y';fifty_fifty=true;
+        }
+      }
+    }
+    else if (g == dmax && h == dmax) {
+      // handle the weird 50/50 bug
+      if (plant_pairs.length == 0) {
+        plant_pairs.add(fifty_idx['g']);
+        plant_pairs.add(fifty_idx['h']);
+        res1 += 'G';res2 += 'H';fifty_fifty=true;
+      } else {
+        if (eq(fifty_idx['g'], plant_pairs[0])) {
+          res1 += 'G';res2 += 'H';fifty_fifty=true;
+        } else if (eq(fifty_idx['g'], plant_pairs[1])) {
+          res1 += 'H';res2 += 'G';fifty_fifty=true;
+        } else {
+          res1 += 'G';res2 += 'H';fifty_fifty=true;
+        }
+      }
+    }
+    else if (y == dmax && h == dmax) {
+      // handle the weird 50/50 bug
+      if (plant_pairs.length == 0) {
+        plant_pairs.add(fifty_idx['y']);
+        plant_pairs.add(fifty_idx['h']);
+        res1 += 'Y';res2 += 'H';fifty_fifty=true;
+      } else {
+        if (eq(fifty_idx['y'], plant_pairs[0])) {
+          res1 += 'Y';res2 += 'H';fifty_fifty=true;
+        } else if (eq(fifty_idx['y'], plant_pairs[1])) {
+          res1 += 'H';res2 += 'Y';fifty_fifty=true;
+        } else {
+          res1 += 'Y';res2 += 'H';fifty_fifty=true;
+        }
+      }
+    }
+    else if (g == dmax) {res1 += 'G';res2 += 'G';}
+    else if (y == dmax) {res1 += 'Y';res2 += 'Y';}
+    else if (h == dmax) {res1 += 'H';res2 += 'H';}
+  }
+  
+  return [res1, res2, fifty_fifty];
 }

@@ -1,11 +1,13 @@
-// import 'dart:html';
+import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
 import 'package:rust_genetics/widgets.dart';
 import 'package:rust_genetics/dialogs.dart';
+import 'package:rust_genetics/pages.dart';
 
 void main() => runApp(App());
 
@@ -14,21 +16,21 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Rust',
+      title: 'Rust Genetics',
       home: LoaderOverlay(
         useDefaultLoading: true,
-        child: Home(),
+        child: HomePage(),
       ),
     );
   }
 }
 
-class Home extends StatefulWidget {
+class HomePage extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _HomeState extends State<Home> {
+class _HomePageState extends State<HomePage> {
   final List<String> _clones = <String>[];
   final TextEditingController _textFieldController = TextEditingController();
 
@@ -36,15 +38,87 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Rust Genetics')),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Stack(children: <Widget>[
+                Positioned(
+                  bottom: 12.0,
+                  left: 16.0,
+                  child: Text("Super SECRET Menu",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w500
+                    )
+                  )
+                ),
+              ]),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end:
+                    Alignment(0.8, 0.0),
+                  colors: <Color>[
+                    Color(0xff55CDFC),
+                    Color(0xffF7A8B8)
+                  ],
+                  tileMode: TileMode.repeated,
+                ),
+              ),
+            ),
+            // ListTile(
+            //   title: Text('How to crossbreed'),
+            //   onTap: () {
+            //     Navigator.pop(context);
+            //     Navigator.push(context, new MaterialPageRoute(
+            //       builder: (BuildContext context) {
+            //         return HowToPage();
+            //       },
+            //     ));
+            //   },
+            // ),
+            ListTile(
+              title: Text('About'),
+              onTap: () {
+                Navigator.pop(context);
+                showAboutDialog(
+                  context: context,
+                  applicationIcon: Image.asset('assets/icon/rust_logo.png'),
+                  applicationName: 'Rust Genetics Solver',
+                  applicationVersion: '1.0.01',
+                  children: [
+                    Text("Heya! I hope you find this app usefull."),
+                    Text("Let me know of any bugs here:"),
+                    InkWell(
+                      child: Text('Reddit',style: TextStyle(color: Colors.blue)),
+                      onTap: () => launch('https://www.reddit.com/user/Lillien_Lily')
+                    ),
+                    InkWell(
+                      child: Text('Discord',style: TextStyle(color: Colors.blue)),
+                      onTap: () => launch('https://discordapp.com/users/359404497925177346/')
+                    ),
+                  ]
+                );
+              },
+            ),
+          ],
+        ),
+      ),
       body: Container(
         child: ListView(children: _getItems()),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            // colors: [Colors.purple[900], Colors.purple]
-            stops: [0.3, 0.5, 0.7],
-            colors: [Color.fromRGBO(85, 205, 252, 1), Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(247, 168, 184, 1)]
+            begin: Alignment.topLeft,
+            end:
+              Alignment(0.8, 0.0),
+            colors: <Color>[
+              Color(0xffF7A8B8),
+              Color(0xff55CDFC),
+            ],
+            tileMode: TileMode.repeated
           ),
         ),
       ),
@@ -52,17 +126,19 @@ class _HomeState extends State<Home> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(width: 56,),
-          FloatingActionButton(
-            heroTag: "calculate",
-            onPressed: () {
+          ElevatedButton(
+            child: Text('Calculate'),
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 18),
+              textStyle: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold
+              )
+            ),
+            onPressed: _clones.length == 0 ? null : () {
               idealGeneDialog(context, _clones);
-            },
-            tooltip: 'Calculate',
-            child: Icon(Icons.calculate)
+            }
           ),
-          // SizedBox(
-          //   width: 100,
-          // ),
           FloatingActionButton(
             heroTag: "add_clone",
             onPressed: () => _displayDialog(context),
@@ -75,8 +151,6 @@ class _HomeState extends State<Home> {
   }
 
   void _addClone(String title) {
-    // Wrapping it inside a set state will notify
-    // the app that the state has changed
     if (!_clones.contains(title)) {
       setState(() {
         _clones.add(title);
@@ -90,8 +164,6 @@ class _HomeState extends State<Home> {
   }
 
   void _removeClone(String title) {
-    // Wrapping it inside a set state will notify
-    // the app that the state has changed
     setState(() {
       _clones.remove(title);
     });
@@ -101,7 +173,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  // Generate a single item widget
+
   Future<AlertDialog> _displayDialog(BuildContext context) async {
     return showDialog(
         context: context,

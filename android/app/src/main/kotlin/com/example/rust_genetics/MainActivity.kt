@@ -1,4 +1,4 @@
-package faul.eduard.rust_genetics
+package faul.lillien.rust_genetics
 
 import io.flutter.embedding.android.FlutterActivity
 

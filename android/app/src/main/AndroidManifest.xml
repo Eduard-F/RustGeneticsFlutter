@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="faul.eduard.rust_genetics">
+    package="faul.lillien.rust_genetics">
    <application
-        android:label="Rust Genetics"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Rust Genetics Calculator"
+        android:icon="@mipmap/rust">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

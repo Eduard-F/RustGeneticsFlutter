@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:rust_genetics/widgets.dart';
 
@@ -168,11 +169,76 @@ class _HowToPageState extends State<HowToPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('How To')),
       body: Container(
-        child: ListView(
-          children: [
-            Text('hello'),
-            Text('bye')
-          ],
+        child: Center(
+          child: ListView(
+            // shrinkWrap: true,
+            children: [
+              Text(
+                'Add enough Clones using the bottom right "+" button, then press "Calculate" and select your desired genetics',
+                style: TextStyle(
+                  fontSize: 28,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow( // bottomLeft
+                      offset: Offset(-1.5, -1.5),
+                      color: Colors.black,
+                      blurRadius: 2
+                    ),
+                    Shadow( // bottomRight
+                      offset: Offset(1.5, -1.5),
+                      color: Colors.black,
+                      blurRadius: 2
+                    ),
+                    Shadow( // topRight
+                      offset: Offset(1.5, 1.5),
+                      color: Colors.black,
+                      blurRadius: 2
+                    ),
+                    Shadow( // topLeft
+                      offset: Offset(-1.5, 1.5),
+                      color: Colors.black,
+                      blurRadius: 2
+                    ),
+                  ]
+                ),
+              ),
+              SizedBox(height: 50),
+              Text(
+                'You can check out this video below to see how crossbreeding works in-game',
+                style: TextStyle(
+                  fontSize: 28,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow( // bottomLeft
+                      offset: Offset(-1.5, -1.5),
+                      color: Colors.black,
+                      blurRadius: 2
+                    ),
+                    Shadow( // bottomRight
+                      offset: Offset(1.5, -1.5),
+                      color: Colors.black,
+                      blurRadius: 2
+                    ),
+                    Shadow( // topRight
+                      offset: Offset(1.5, 1.5),
+                      color: Colors.black,
+                      blurRadius: 2
+                    ),
+                    Shadow( // topLeft
+                      offset: Offset(-1.5, 1.5),
+                      color: Colors.black,
+                      blurRadius: 2
+                    ),
+                  ]
+                ),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _launchURL,
+                child: Text('Tamura77 Youtube'),
+              ),
+            ]
+          ),
         ),
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -191,3 +257,6 @@ class _HowToPageState extends State<HowToPage> {
   }
 }
 
+const _url = 'https://www.youtube.com/watch?v=XDY14Y-3oVA';
+void _launchURL() async =>
+    await canLaunch(_url) ? await launch(_url) : throw 'Could not launch $_url';

@@ -2,7 +2,7 @@
     package="faul.lillien.rust_genetics">
    <application
         android:label="Rust Genetics Calculator"
-        android:icon="@mipmap/rust">
+        android:icon="@mipmap/rust_logo">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

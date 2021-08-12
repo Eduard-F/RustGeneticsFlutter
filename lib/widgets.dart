@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:arrow_path/arrow_path.dart';
 
 
 Widget buildSeedItem(String title) {
@@ -109,6 +110,45 @@ class Genetic {
   String get key {
     return this.label;
   }
+}
+
+class ArrowPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    TextSpan textSpan;
+    TextPainter textPainter;
+    Path path;
+
+    // The arrows usually looks better with rounded caps.
+    Paint paint = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..strokeWidth = 3.0;
+
+    /// Adjusted
+    path = Path();
+    path.moveTo(size.width/2, size.height/2);
+    path.relativeCubicTo(0, 0, size.width * 0.5 - 50, size.height * 0.2, size.width * 0.5 - 50, size.height * 0.5 - 100);
+    path = ArrowPath.make(path: path, isAdjusted: false);
+    canvas.drawPath(path, paint..color = Colors.blue);
+
+    textSpan = TextSpan(
+      text: 'Try Adding Clones',
+      style: TextStyle(color: Colors.blue),
+    );
+    textPainter = TextPainter(
+      text: textSpan,
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    textPainter.paint(canvas, Offset(size.width * 0.35, size.height * 0.45));
+  }
+
+  @override
+  bool shouldRepaint(ArrowPainter oldDelegate) => true;
 }
 
 class UpperCaseTextFormatter extends TextInputFormatter {

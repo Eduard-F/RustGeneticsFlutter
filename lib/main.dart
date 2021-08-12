@@ -1,4 +1,4 @@
-import 'dart:html';
+// import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -69,17 +69,17 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            // ListTile(
-            //   title: Text('How to crossbreed'),
-            //   onTap: () {
-            //     Navigator.pop(context);
-            //     Navigator.push(context, new MaterialPageRoute(
-            //       builder: (BuildContext context) {
-            //         return HowToPage();
-            //       },
-            //     ));
-            //   },
-            // ),
+            ListTile(
+              title: Text('How to crossbreed'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context, new MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return HowToPage();
+                  },
+                ));
+              },
+            ),
             ListTile(
               title: Text('About'),
               onTap: () {
@@ -108,7 +108,8 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: Container(
-        child: ListView(children: _getItems()),
+        child: _buildMainBody(),
+        constraints: BoxConstraints.expand(),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -180,33 +181,46 @@ class _HomePageState extends State<HomePage> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Add a clone to your list'),
-            content: TextField(
-              autofocus: true,
-              controller: _textFieldController,
-              decoration: const InputDecoration(hintText: 'Enter genetics here'),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[gyhxwGYHXW]')),
-                LengthLimitingTextInputFormatter(6),
-                UpperCaseTextFormatter()
-              ],
-              onSubmitted: (value) {
-                if (_textFieldController.text.length == 6) {
-                  Navigator.of(context).pop();
-                  _addClone(_textFieldController.text);
-                  if ('w'.allMatches(_textFieldController.text).length > 2 || 'x'.allMatches(_textFieldController.text).length > 2) {  
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Warning - try not to add clones that have 3+ red genes'),
-                        duration: const Duration(seconds: 2)
-                      )
-                    );
-                  }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Not enough characters - (6)'))
-                  );
-                }
-              }
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text(
+                    'Only G,Y,H,X and W input allowed',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    )
+                  ),
+                  TextField(
+                    autofocus: true,
+                    controller: _textFieldController,
+                    decoration: const InputDecoration(hintText: 'Enter genetics here'),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[gyhxwGYHXW]')),
+                      LengthLimitingTextInputFormatter(6),
+                      UpperCaseTextFormatter()
+                    ],
+                    onSubmitted: (value) {
+                      if (_textFieldController.text.length == 6) {
+                        Navigator.of(context).pop();
+                        _addClone(_textFieldController.text);
+                        if ('w'.allMatches(_textFieldController.text).length > 2 || 'x'.allMatches(_textFieldController.text).length > 2) {  
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Warning - try not to add clones that have 3+ red genes'),
+                              duration: const Duration(seconds: 2)
+                            )
+                          );
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Not enough characters - (6)'))
+                        );
+                      }
+                    }
+                  ),
+                ]
+              )
             ),
             actions: <Widget>[
               FlatButton(
@@ -241,6 +255,15 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
+  Widget _buildMainBody() {
+    if (_clones.isNotEmpty) {
+      return ListView( children: _getItems());
+    }
+    return CustomPaint(
+      painter: ArrowPainter(),
+    );
+  }
+
   List<Widget> _getItems() {
     final List<Widget> _cloneWidgets = <Widget>[];
     for (String title in _clones) {
@@ -269,10 +292,10 @@ class _HomePageState extends State<HomePage> {
             GeneCircle(clone[4]),
             SizedBox(width: 2),
             GeneCircle(clone[5]),
-            SizedBox(width: 2),
+            // SizedBox(width: 2),
             IconButton(icon: Icon(
               Icons.delete,
-              color: Colors.grey,
+              color: Colors.grey[700],
             ), onPressed: () => _removeClone(title))
           ],
         )

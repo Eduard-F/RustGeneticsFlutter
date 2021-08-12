@@ -18,7 +18,7 @@ Function eq = const ListEquality().equals;
 Future<bool> run(context, _plants, String ideal, [bool skip_check = false]) async {
   try {
     // _plants = ['YHYYGH','YGYHGH','GGGWGY','GGGXYH','HHGGHX','WYYGHH','YHGWYH','GGHXGH','GHYXYH','WYGGHX','GYHWGY','WYGXWY'];
-    _plants = ['YGYHGH','GYHWGY','WYGXWY','YHYYGH','GGGWGY'];
+    // _plants = ['YGYHGH','GYHWGY','WYGXWY','YHYYGH','GGGWGY'];
     print(_plants);
     if (_plants.length < 4) {
       ScaffoldMessenger.of(context).showSnackBar(

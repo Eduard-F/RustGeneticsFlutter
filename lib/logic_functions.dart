@@ -17,7 +17,7 @@ Function eq = const ListEquality().equals;
 
 Future<bool> run(context, _plants, String ideal, [bool skip_check = false]) async {
   try {
-    // _plants = ['YHYYGH','YGYHGH','GGGWGY','GGGXYH','HHGGHX','WYYGHH','YHGWYH','GGHXGH','GHYXYH','WYGGHX','GYHWGY','WYGXWY'];
+    // _plants = ['GGGGGG','YYYYYY','GGHHHH','GYYGYG','GYGYGG'];
     // _plants = ['YGYHGH','GYHWGY','WYGXWY','YHYYGH','GGGWGY'];
     print(_plants);
     if (_plants.length < 4) {
